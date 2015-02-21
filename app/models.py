@@ -1,6 +1,6 @@
 
 import random
-from filters import WallFilter, SelfFilter, FoodFilter, EnemyFilter
+from filters import WallFilter, SelfFilter, FoodFilter, EnemyFilter, HeadOnLookAheadFilter
 
 __author__ = 'awhite'
 
@@ -60,6 +60,7 @@ class Snake(object):
             SelfFilter(),
             FoodFilter(),
             EnemyFilter(),
+            HeadOnLookAheadFilter(),
         ]
 
     @property

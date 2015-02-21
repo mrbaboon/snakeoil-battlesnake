@@ -163,3 +163,41 @@ class FoodFilter(Filter):
         logger.info("Food moves: %s" % self.actions)
 
         return self.actions
+
+
+class HeadOnLookAheadFilter(Filter):
+
+    def apply(self, snake, actions):
+        from models import Snake
+
+        self.actions = actions
+        snakes = snake.enemies
+
+        for this_snake in snakes:
+
+            # skip if this is me...
+            if this_snake.name == snake.name:
+                continue
+
+            # get the lengths of us and the current enemy
+            this_snake_len = len(this_snake.coords)
+            snake_len = len(snake.coords)
+
+            # Only attack if we are bigger
+            if snake_len > this_snake_len:
+
+                # lock x, deal with y
+                if this_snake.head_x == snake.head_x:
+                    if this_snake.head_y == snake.head_y-1:
+                        self.actions = [Snake.UP]
+                    if this_snake.head_y == snake.head_y+1:
+                        self.actions = [Snake.DOWN]
+
+                # lock y, deal with x
+                if this_snake.head_y == snake.head_y:
+                    if this_snake.head_x == snake.head_x-1:
+                        self.actions = [Snake.LEFT]
+                    if this_snake.head_x == snake.head_x+1:
+                        self.actions = [Snake.RIGHT]
+
+        return self.actions
