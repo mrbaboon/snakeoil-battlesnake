@@ -1,4 +1,6 @@
+
 import random
+from filters import WallFilter, SelfFilter
 
 __author__ = 'awhite'
 
@@ -49,16 +51,27 @@ class Snake(object):
             self.DOWN,
         ]
 
+        self.filters = [
+            WallFilter(),
+            SelfFilter(),
+        ]
+
     @property
     def is_alive(self):
         return self.state == 'alive'
 
     def move(self):
-        self.filter_walls()
-        self.filter_self()
+
+        allowable_actions = [self.DOWN, self.UP, self.LEFT, self.RIGHT]
+
+        for filter in self.filters:
+            allowable_actions = filter.apply(self, allowable_actions)
+
+        # self.filter_walls()
+        # self.filter_self()
         self.filter_enemies()
 
-        return random.choice(self.directions)
+        return random.choice(allowable_actions)
 
     def filter_self(self):
         for x, y in self.coords:
