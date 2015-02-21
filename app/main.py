@@ -4,7 +4,7 @@ import logging
 
 from app.models import Snake, Board, Tile, Game
 
-SNAKE_NAME = 'snakeoil'
+SNAKE_NAME = 'snakeoil2'
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
@@ -52,17 +52,19 @@ def move():
 
     for snake_data in snakes:
 
+        logger.info(snake_data)
+
         if snake_data.get('name') == SNAKE_NAME:
             our_snake_data = snake_data
 
         else:
-            if snake_data['state'] == 'alive':
-                enemy_snakes.append(
-                    Snake(name=snake_data.get('name'),
-                          state=snake_data.get('state'),
-                          coords=snake_data.get('coords'),
-                          last_eaten=snake_data.get('last_eaten'))
-                )
+            
+            enemy_snakes.append(
+                Snake(name=snake_data.get('name'),
+                      state=snake_data.get('state'),
+                      coords=snake_data.get('coords'),
+                      last_eaten=snake_data.get('last_eaten'))
+            )
 
     our_snake = Snake(name=our_snake_data.get('name'),
                       state=our_snake_data.get('state'),
