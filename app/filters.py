@@ -42,29 +42,6 @@ class WallFilter(Filter):
         return self.actions
 
 
-class FoodFilter(Filter):
-
-    def apply(self, snake, actions):
-        from models import Snake
-
-        self.actions = actions
-        if snake.head_x == 0:
-            self.remove_action(Snake.LEFT)
-
-
-        if snake.head_x == snake.board.width - 1:
-            self.remove_action(Snake.RIGHT)
-
-        if snake.head_y == 0:
-            self.remove_action(Snake.UP)
-
-
-        if snake.head_y == snake.board.height - 1:
-            self.remove_action(Snake.DOWN)
-
-        return self.actions
-
-
 class SelfFilter(Filter):
 
     def apply(self, snake, actions):
@@ -89,16 +66,6 @@ class SelfFilter(Filter):
                     self.remove_action(Snake.UP)
 
         return self.actions
-
-
-# class FoodFilter(Filter):
-#
-#     def apply(self, snake, actions):
-#         closest_food = None
-#         for food in
-
-
-
 
 
 class EnemyFilter(Filter):
@@ -135,5 +102,45 @@ class EnemyFilter(Filter):
         return self.actions
 
 
+class FoodFilter(Filter):
+    closest_food = None
+    closest_food_distance = None
 
+    def apply(self, snake, actions):
+        from app.models import Snake
 
+        for food in snake.board.food:
+            food_distance = food.distance(snake.head_x, snake.head_y)
+
+            if not self.closest_food:
+
+                self.closest_food = food
+                self.closest_food_distance = food_distance
+
+            else:
+
+                if food_distance < self.closest_food_distance:
+                    self.closest_food = food
+                    self.closest_food_distance = food_distance
+
+        if self.closest_food.x > snake.head_x:
+            self.remove_action(Snake.LEFT)
+
+        elif self.closest_food.x < snake.head_x:
+            self.remove_action(Snake.RIGHT)
+
+        else:
+            self.remove_action(Snake.LEFT)
+            self.remove_action(Snake.RIGHT)
+
+        if self.closest_food.y > snake.head_y:
+            self.remove_action(Snake.UP)
+
+        elif self.closest_food.y < snake.head_y:
+            self.remove_action(Snake.DOWN)
+
+        else:
+            self.remove_action(Snake.UP)
+            self.remove_action(Snake.DOWN)
+
+        return self.actions

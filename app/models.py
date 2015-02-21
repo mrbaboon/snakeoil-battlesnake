@@ -1,6 +1,6 @@
 
 import random
-from filters import WallFilter, SelfFilter
+from filters import WallFilter, SelfFilter, FoodFilter, EnemyFilter
 
 __author__ = 'awhite'
 
@@ -58,6 +58,8 @@ class Snake(object):
         self.filters = [
             WallFilter(),
             SelfFilter(),
+            # FoodFilter(),
+            EnemyFilter(),
         ]
 
     @property
@@ -70,11 +72,7 @@ class Snake(object):
 
         for filter in self.filters:
             allowable_actions = filter.apply(self, allowable_actions)
-
-        # self.filter_walls()
-        # self.filter_self()
-        self.filter_enemies()
-
+            
         return random.choice(allowable_actions)
 
     def filter_self(self):
@@ -107,10 +105,6 @@ class Snake(object):
 
         if self.head_y == self.board.height - 1:
             self.directions.remove(self.DOWN)
-
-
-    def filter_enemies(self):
-        pass
 
     def __str__(self):
         return '<Snake: %s>' % self.name
