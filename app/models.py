@@ -58,7 +58,7 @@ class Snake(object):
         self.filters = [
             WallFilter(),
             SelfFilter(),
-            # FoodFilter(),
+            FoodFilter(),
             EnemyFilter(),
         ]
 
@@ -72,7 +72,7 @@ class Snake(object):
 
         for filter in self.filters:
             allowable_actions = filter.apply(self, allowable_actions)
-            
+
         return random.choice(allowable_actions)
 
     def filter_self(self):
