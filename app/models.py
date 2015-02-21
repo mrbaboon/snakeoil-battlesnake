@@ -44,6 +44,10 @@ class Snake(object):
         self.coords = coords
         self.head_x = coords[0][0]
         self.head_y = coords[0][1]
+
+        self.enemies = enemies
+        self.last_eaten = last_eaten
+
         self.directions = [
             self.LEFT,
             self.RIGHT,

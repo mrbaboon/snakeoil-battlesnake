@@ -96,3 +96,44 @@ class SelfFilter(Filter):
 #     def apply(self, snake, actions):
 #         closest_food = None
 #         for food in
+
+
+
+
+
+class EnemyFilter(Filter):
+
+    def apply(self, snake, actions):
+        from models import Snake
+
+        self.actions = actions
+
+        snakes = snake.enemies
+
+        for this_snake in snakes:
+
+            # skip if this is me...
+            if this_snake.name == snake.name:
+                continue
+
+            for x, y in this_snake.coords:
+                if snake.head_y == y:
+                    if snake.head_x + 1 == x:
+                        self.remove_action(Snake.RIGHT)
+
+                    if snake.head_x - 1 == x:
+                        self.remove_action(Snake.LEFT)
+
+                if snake.head_x == x:
+
+                    if snake.head_y + 1 == y:
+                        self.remove_action(Snake.DOWN)
+
+                    if snake.head_y - 1 == y:
+                        self.remove_action(Snake.UP)
+
+        return self.actions
+
+
+
+
