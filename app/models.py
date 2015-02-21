@@ -114,6 +114,21 @@ class Snake(object):
         return '<Snake: %s>' % self.name
 
 
+class Food(object):
+    x = None
+    y = None
+
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+
+    def distance(self, snake_x, snake_y):
+
+        distance = (snake_x - self.x)**2 + (snake_y - self.y)**2
+
+        return distance
+
+
 class Tile(object):
 
     state = None
@@ -144,7 +159,7 @@ class Board(object):
         for x, row in enumerate(board):
             for y, tile in enumerate(row):
                 if tile['state'] == 'food':
-                    self.food.append((x, y))
+                    self.food.append(Food(x, y))
 
 
     @property

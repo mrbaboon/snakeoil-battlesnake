@@ -73,6 +73,10 @@ def move():
 
     direction = our_snake.move()
 
+    for food in board.food:
+        dist = food.distance(our_snake.head_x, our_snake.head_y)
+        logger.info(dist)
+
     return json.dumps({
         'move': direction,
         'taunt': 'battlesnake-python!'

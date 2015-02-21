@@ -1,6 +1,4 @@
 
-from models import Snake
-
 
 class Filter(object):
 
@@ -8,6 +6,7 @@ class Filter(object):
     priority = 0
 
     def __init__(self, priority=0):
+        from models import Snake
         self.priority = priority
 
     def apply(self, snake, actions):
@@ -17,6 +16,8 @@ class Filter(object):
 class WallFilter(Filter):
 
     def apply(self, snake, actions):
+        from models import Snake
+
         self.actions = actions
         if snake.head_x == 0:
             try:
@@ -46,6 +47,8 @@ class WallFilter(Filter):
 class SelfFilter(Filter):
 
     def apply(self, snake, actions):
+        from models import Snake
+
         self.actions = actions
         for x, y in snake.coords:
 
