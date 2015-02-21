@@ -2,6 +2,10 @@ import bottle
 import json
 import logging
 
+from app.models import Snake, Board, Tile, Game
+
+SNAKE_NAME = 'snakeoil'
+
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 logger.addHandler(logging.StreamHandler())
@@ -21,7 +25,7 @@ def start():
     data = bottle.request.json
 
     return json.dumps({
-        'name': 'battlesnake-python',
+        'name': SNAKE_NAME,
         'color': '#00ff00',
         'head_url': 'http://battlesnake-python.herokuapp.com',
         'taunt': 'battlesnake-python!'
@@ -32,10 +36,45 @@ def start():
 def move():
     data = bottle.request.json
 
-    logger.info(data)
+    name = data['game_id']
+    turn = data['turn']
+    snakes = data['snakes']
+    board_data = data['board']
+
+    game = Game(name, turn, snakes, board_data)
+    board = Board(board_data)
+
+    logger.info("Board: %s x %s" % (board.width, board.height))
+    logger.info("Food: %s" % board.food)
+
+    our_snake = None
+    enemy_snakes = []
+
+    for snake_data in snakes:
+
+        if snake_data.get('name') == SNAKE_NAME:
+            our_snake_data = snake_data
+
+        else:
+            if snake_data['state'] == 'alive':
+                enemy_snakes.append(
+                    Snake(name=snake_data.get('name'),
+                          state=snake_data.get('state'),
+                          coords=snake_data.get('coords'),
+                          last_eaten=snake_data.get('last_eaten'))
+                )
+
+    our_snake = Snake(name=our_snake_data.get('name'),
+                      state=our_snake_data.get('state'),
+                      coords=our_snake_data.get('coords'),
+                      last_eaten=our_snake_data.get('last_eaten'),
+                      board=board,
+                      enemies=enemy_snakes)
+
+    direction = our_snake.move()
 
     return json.dumps({
-        'move': 'left',
+        'move': direction,
         'taunt': 'battlesnake-python!'
     })
 
