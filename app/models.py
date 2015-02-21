@@ -90,7 +90,6 @@ class Snake(object):
                 if self.head_y - 1 == y:
                     self.directions.remove(self.UP)
 
-
     def filter_walls(self):
 
         if self.head_x == 0:
@@ -108,7 +107,6 @@ class Snake(object):
 
     def filter_enemies(self):
         pass
-
 
     def __str__(self):
         return '<Snake: %s>' % self.name

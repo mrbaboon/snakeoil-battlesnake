@@ -12,6 +12,14 @@ class Filter(object):
     def apply(self, snake, actions):
         raise NotImplementedError('implement this in the child object!')
 
+    def remove_action(self, action):
+        from models import Snake
+
+        try:
+            self.actions.remove(action)
+        except Exception:
+            pass
+
 
 class WallFilter(Filter):
 
@@ -20,28 +28,41 @@ class WallFilter(Filter):
 
         self.actions = actions
         if snake.head_x == 0:
-            try:
-                self.actions.remove(Snake.LEFT)
-            except Exception:
-                pass
+            self.remove_action(Snake.LEFT)
 
         if snake.head_x == snake.board.width - 1:
-            try:
-                self.actions.remove(Snake.RIGHT)
-            except Exception:
-                pass
+            self.remove_action(Snake.RIGHT)
 
         if snake.head_y == 0:
-            try:
-                self.actions.remove(Snake.UP)
-            except Exception:
-                pass
+            self.remove_action(Snake.UP)
 
         if snake.head_y == snake.board.height - 1:
-            try:
-                self.actions.remove(Snake.DOWN)
-            except Exception:
-                pass
+            self.remove_action(Snake.DOWN)
+
+        return self.actions
+
+
+class FoodFilter(Filter):
+
+    def apply(self, snake, actions):
+        from models import Snake
+
+        self.actions = actions
+        if snake.head_x == 0:
+            self.remove_action(Snake.LEFT)
+
+
+        if snake.head_x == snake.board.width - 1:
+            self.remove_action(Snake.RIGHT)
+
+        if snake.head_y == 0:
+            self.remove_action(Snake.UP)
+
+
+        if snake.head_y == snake.board.height - 1:
+            self.remove_action(Snake.DOWN)
+
+        return self.actions
 
 
 class SelfFilter(Filter):
@@ -52,37 +73,26 @@ class SelfFilter(Filter):
         self.actions = actions
         for x, y in snake.coords:
 
-            if snake.head_x + 1 == x and snake.head_y == y:
-                try:
-                    self.actions.remove(Snake.RIGHT)
-                except Exception:
-                    pass
+            if snake.head_y == y:
+                if snake.head_x + 1 == x:
+                    self.remove_action(Snake.RIGHT)
 
-            if snake.head_x - 1 == x and snake.head_y == y:
-                try:
-                    self.actions.remove(Snake.LEFT)
-                except Exception:
-                    pass
+                if snake.head_x - 1 == x:
+                    self.remove_action(Snake.LEFT)
 
             if snake.head_x == x:
 
                 if snake.head_y + 1 == y:
-                    try:
-                        self.actions.remove(Snake.DOWN)
-                    except Exception:
-                        pass
+                    self.remove_action(Snake.DOWN)
 
                 if snake.head_y - 1 == y:
-                    try:
-                        self.actions.remove(Snake.UP)
-                    except Exception:
-                        pass
+                    self.remove_action(Snake.UP)
+
+        return self.actions
 
 
-
-
-
-
-
-
-
+# class FoodFilter(Filter):
+#
+#     def apply(self, snake, actions):
+#         closest_food = None
+#         for food in
