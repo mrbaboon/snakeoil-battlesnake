@@ -34,7 +34,7 @@ class Snake(object):
     head = None
     board = None
     turn = None
-
+    health_threshold = None
     left = False
 
     LEFT = 'left'
@@ -55,6 +55,7 @@ class Snake(object):
 
         self.enemies = enemies
         self.last_eaten = last_eaten
+        self.heath_threshold = board.height / 2
 
         self.directions = [
             self.LEFT,
@@ -103,8 +104,11 @@ class Snake(object):
         self.filters.append(SelfFilter())
         self.filters.append(EnemyFilter())
 
-        self.filters.append(FoodFilter())
-        HeadOnLookAheadFilter()
+        if self.health < self.health_threshold or not self.is_biggest:
+            self.filters.append(FoodFilter())
+
+
+        # HeadOnLookAheadFilter()
 
         for filter in self.filters:
             allowable_actions = filter.apply(self, allowable_actions)
