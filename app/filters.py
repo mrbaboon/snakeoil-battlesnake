@@ -278,17 +278,18 @@ class HeadOnLookAheadFilter(Filter):
 
                 if action == Snake.UP:
                     attackables = self.get_attackables_in_proximity(snake.head_x, snake.head_y-1, snake.enemies, len(snake.coords))
+
                     if attackables:
                         potential_benefit_positions.append(Snake.UP)
 
-                    for attackable in attackables:
+                    for attackable in self.run_away_from(snake.head_x, snake.head_y-1, snake.enemies, len(snake.coords)):
                         if attackable.length >= snake.length:
                             self.remove_action(Snake.UP)
 
                 elif action == Snake.DOWN:
                     attackables = self.get_attackables_in_proximity(snake.head_x, snake.head_y+1, snake.enemies, len(snake.coords))
 
-                    for attackable in attackables:
+                    for attackable in self.run_away_from(snake.head_x, snake.head_y+1, snake.enemies, len(snake.coords)):
                         if attackable.length >= snake.length:
                             self.remove_action(Snake.DOWN)
 
@@ -298,7 +299,7 @@ class HeadOnLookAheadFilter(Filter):
                 elif action == Snake.LEFT:
                     attackables = self.get_attackables_in_proximity(snake.head_x-1, snake.head_y, snake.enemies, len(snake.coords))
 
-                    for attackable in attackables:
+                    for attackable in self.run_away_from(snake.head_x-1, snake.head_y, snake.enemies, len(snake.coords)):
                         if attackable.length >= snake.length:
                             self.remove_action(Snake.LEFT)
 
@@ -308,7 +309,7 @@ class HeadOnLookAheadFilter(Filter):
                 elif action == Snake.RIGHT:
                     attackables = self.get_attackables_in_proximity(snake.head_x+1, snake.head_y, snake.enemies, len(snake.coords))
 
-                    for attackable in attackables:
+                    for attackable in self.run_away_from(snake.head_x+1, snake.head_y, snake.enemies, len(snake.coords)):
                         if attackable.length >= snake.length:
                             self.remove_action(Snake.RIGHT)
 
@@ -346,5 +347,29 @@ class HeadOnLookAheadFilter(Filter):
                     attackables.append(enemy)
 
         return attackables
+
+    def run_away_from(self, x, y, enemies, my_length):
+
+        run_from = []
+
+        for enemy in enemies:
+            enemy_len = len(enemy.coords)
+
+            if my_length <= enemy_len:
+                continue
+
+            if enemy.head_y == y-1:
+                if x-1 <= enemy.head_x <= x+1:
+                    run_from.append(enemy)
+
+            if enemy.head_y == y:
+                if x-1 <= enemy.head_x <= x+1:
+                    run_from.append(enemy)
+
+            if enemy.head_y == y+1:
+                if x-1 <= enemy.head_x <= x+1:
+                    run_from.append(enemy)
+
+        return run_from
 
 
