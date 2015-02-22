@@ -22,10 +22,11 @@ class Filter(object):
     def remove_action(self, action):
         from models import Snake
 
-        try:
-            self.actions.remove(action)
-        except Exception:
-            pass
+        if len(self.actions) > 1:
+            try:
+                self.actions.remove(action)
+            except Exception:
+                pass
 
 
 class WallFilter(Filter):
