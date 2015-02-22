@@ -2,6 +2,12 @@
 import random
 from filters import WallFilter, SelfFilter, FoodFilter, EnemyFilter, HeadOnLookAheadFilter
 
+import logging
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+logger.addHandler(logging.StreamHandler())
+
 __author__ = 'awhite'
 
 
@@ -27,7 +33,8 @@ class Snake(object):
     health = None
     head = None
     board = None
-
+    turn = None
+    health_threshold = None
     left = False
 
     LEFT = 'left'
@@ -37,16 +44,22 @@ class Snake(object):
 
     directions = None
 
-    def __init__(self, name, state, coords, board=None, enemies=None, last_eaten=None):
+    def __init__(self, name, state, coords, turn, board=None, enemies=None, last_eaten=None):
         self.name = name
         self.state = state
         self.board = board
         self.coords = coords
+        self.turn = turn
         self.head_x = coords[0][0]
         self.head_y = coords[0][1]
 
         self.enemies = enemies
         self.last_eaten = last_eaten
+
+        if board:
+            self.heath_threshold = board.height / 2
+        else:
+            self.heath_threshold = 50
 
         self.directions = [
             self.LEFT,
@@ -55,57 +68,56 @@ class Snake(object):
             self.DOWN,
         ]
 
-        self.filters = [
-            WallFilter(),
-            SelfFilter(),
-            FoodFilter(),
-            EnemyFilter(),
-            HeadOnLookAheadFilter(),
-        ]
-
     @property
     def is_alive(self):
         return self.state == 'alive'
+
+    @property
+    def health(self):
+
+        if self.last_eaten:
+
+            health_diff = self.turn - self.last_eaten
+
+            return 100 - health_diff - 1
+
+        return 100 - self.turn - 1
+
+    @property
+    def length(self):
+        return len(self.coords)
+
+    @property
+    def is_biggest(self):
+
+        if self.enemies:
+
+            enemy_lengths = [enemy.length for enemy in self.enemies]
+
+            return self.length > max(enemy_lengths)
+
+        return True
 
     def move(self):
 
         allowable_actions = [self.DOWN, self.UP, self.LEFT, self.RIGHT]
 
+        self.filters = []
+
+        self.filters.append(WallFilter())
+        self.filters.append(SelfFilter())
+        self.filters.append(EnemyFilter())
+
+        if self.health < self.health_threshold or not self.is_biggest:
+            self.filters.append(FoodFilter())
+
+
+        # HeadOnLookAheadFilter()
+
         for filter in self.filters:
             allowable_actions = filter.apply(self, allowable_actions)
 
         return random.choice(allowable_actions)
-
-    def filter_self(self):
-        for x, y in self.coords:
-
-            if self.head_x + 1 == x and self.head_y == y:
-                self.directions.remove(self.RIGHT)
-
-            if self.head_x - 1 == x and self.head_y == y:
-                self.directions.remove(self.LEFT)
-
-            if self.head_x == x:
-
-                if self.head_y + 1 == y:
-                    self.directions.remove(self.DOWN)
-
-                if self.head_y - 1 == y:
-                    self.directions.remove(self.UP)
-
-    def filter_walls(self):
-
-        if self.head_x == 0:
-            self.directions.remove(self.LEFT)
-
-        if self.head_x == self.board.width - 1:
-            self.directions.remove(self.RIGHT)
-
-        if self.head_y == 0:
-            self.directions.remove(self.UP)
-
-        if self.head_y == self.board.height - 1:
-            self.directions.remove(self.DOWN)
 
     def __str__(self):
         return '<Snake: %s>' % self.name
