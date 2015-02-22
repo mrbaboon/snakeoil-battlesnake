@@ -5,7 +5,7 @@ import logging
 
 from app.models import Snake, Board, Tile, Game
 
-SNAKE_NAME = 'snakeoil-laptop'
+SNAKE_NAME = 'snakeoil'
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
