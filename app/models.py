@@ -55,7 +55,11 @@ class Snake(object):
 
         self.enemies = enemies
         self.last_eaten = last_eaten
-        self.heath_threshold = board.height / 2
+
+        if board:
+            self.heath_threshold = board.height / 2
+        else:
+            self.heath_threshold = 50
 
         self.directions = [
             self.LEFT,
