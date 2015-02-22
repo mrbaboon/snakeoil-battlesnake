@@ -112,7 +112,7 @@ class Snake(object):
             self.filters.append(FoodFilter())
 
 
-        # HeadOnLookAheadFilter()
+        # self.filters.append(HeadOnLookAheadFilter())
 
         for filter in self.filters:
             allowable_actions = filter.apply(self, allowable_actions)
