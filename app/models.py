@@ -1,6 +1,6 @@
 
 import random
-from filters import WallFilter, SelfFilter, FoodFilter, EnemyFilter, HeadOnLookAheadFilter
+from filters import WallFilter, SelfFilter, FoodFilter, EnemyFilter, HeadOnLookAheadFilter, DontWreckYoSelfFilter
 
 import logging
 
@@ -111,8 +111,9 @@ class Snake(object):
         if self.health < self.health_threshold or not self.is_biggest:
             self.filters.append(FoodFilter())
 
+        self.filters.append(HeadOnLookAheadFilter())
 
-        # self.filters.append(HeadOnLookAheadFilter())
+        self.filters.append(DontWreckYoSelfFilter())
 
         for filter in self.filters:
             allowable_actions = filter.apply(self, allowable_actions)

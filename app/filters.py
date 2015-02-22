@@ -16,6 +16,7 @@ class Filter(object):
         self.priority = priority
 
     def apply(self, snake, actions):
+
         raise NotImplementedError('implement this in the child object!')
 
     def remove_action(self, action):
@@ -70,7 +71,7 @@ class SelfFilter(Filter):
 
                 if snake.head_y - 1 == y:
                     self.remove_action(Snake.UP)
-
+        logger.info("actions %s" % self.actions)
         return self.actions
 
 
@@ -104,7 +105,7 @@ class EnemyFilter(Filter):
 
                     if snake.head_y - 1 == y:
                         self.remove_action(Snake.UP)
-
+        logger.info("actions %s" % self.actions)
         return self.actions
 
 
@@ -128,12 +129,15 @@ class FoodFilter(Filter):
 
                 if food_distance < self.closest_food_distance:
 
-                    for enemy in snake.enemies:
-
-                        # If no other snake is closer to this food, get it!
-                        if food.distance(enemy.head_x, enemy.head_y) < self.closest_food_distance:
-                            self.closest_food = food
-                            self.closest_food_distance = food_distance
+                    if snake.enemies:
+                        for enemy in snake.enemies:
+                            # If no other snake is closer to this food, get it!
+                            if food.distance(enemy.head_x, enemy.head_y) < self.closest_food_distance:
+                                self.closest_food = food
+                                self.closest_food_distance = food_distance
+                    else:
+                        self.closest_food = food
+                        self.closest_food_distance = food_distance
 
         if self.closest_food.x > snake.head_x:
 
@@ -161,9 +165,96 @@ class FoodFilter(Filter):
             self.remove_action(Snake.UP)
             self.remove_action(Snake.DOWN)
 
-        logger.info("Food moves: %s" % self.actions)
+        logger.info("actions %s" % self.actions)
 
         return self.actions
+
+
+class DontWreckYoSelfFilter(Filter):
+
+    def apply(self, snake, actions):
+        self.actions = actions
+
+        from models import Snake
+
+        if snake.health <= 97:
+            return self.actions
+
+        if len(self.actions) <= 1:
+            return self.actions
+
+        if Snake.UP in self.actions:
+
+            next_x, next_y = snake.head_x, snake.head_y - 1
+
+            for x, y in snake.coords:
+
+                if next_y == y:
+                    if next_x + 1 == x:
+                        self.remove_action(Snake.UP)
+
+                if next_x - 1 == x:
+                    self.remove_action(Snake.UP)
+
+                if next_x == x:
+                    if next_y - 1 == y:
+                        self.remove_action(Snake.UP)
+
+        if Snake.DOWN in self.actions:
+
+            next_x, next_y = snake.head_x, snake.head_y + 1
+
+            for x, y in snake.coords:
+
+                if next_y == y:
+                    if next_x + 1 == x:
+                        self.remove_action(Snake.DOWN)
+
+                    if next_x - 1 == x:
+                        self.remove_action(Snake.DOWN)
+
+                if next_x == x:
+                    if next_y + 1 == y:
+                        self.remove_action(Snake.DOWN)
+
+        if Snake.LEFT in self.actions:
+
+            next_x, next_y = snake.head_x - 1, snake.head_y
+
+            for x, y in snake.coords:
+
+                if next_y == y:
+                    if next_x - 1 == x:
+                        self.remove_action(Snake.LEFT)
+
+                if next_x == x:
+                    if next_y + 1 == y:
+                        self.remove_action(Snake.LEFT)
+
+                    if next_y - 1 == y:
+                        self.remove_action(Snake.LEFT)
+
+        if Snake.RIGHT in self.actions:
+
+            next_x, next_y = snake.head_x + 1, snake.head_y
+
+            for x, y in snake.coords:
+
+                if next_y == y:
+                    if next_x - 1 == x:
+                        self.remove_action(Snake.RIGHT)
+
+                if next_x == x:
+                    if next_y + 1 == y:
+                        self.remove_action(Snake.RIGHT)
+
+                    if next_y - 1 == y:
+                        self.remove_action(Snake.RIGHT)
+
+        logger.info("actions %s" % self.actions)
+
+        return self.actions
+
 
 
 class HeadOnLookAheadFilter(Filter):
@@ -208,7 +299,7 @@ class HeadOnLookAheadFilter(Filter):
             for action in self.actions:
                 if len(potential_benefit_positions) > 0 and action not in potential_benefit_positions:
                     self.remove_action(action)
-
+        logger.info("actions %s" % self.actions)
         return self.actions
 
     def get_attackables_in_proximity(self, x, y, enemies, my_length):

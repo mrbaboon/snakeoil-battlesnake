@@ -5,7 +5,7 @@ import logging
 
 from app.models import Snake, Board, Tile, Game
 
-SNAKE_NAME = 'snakeoil'
+SNAKE_NAME = 'snakeoil-laptop'
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
@@ -109,10 +109,14 @@ def move():
 
     direction = our_snake.move()
 
+    taunt = ""
+
+    if game.turn % 2 == 1:
+        taunt = random.choice(TAUNTS)
 
     return json.dumps({
         'move': direction,
-        'taunt': random.choice(TAUNTS)
+        'taunt': taunt,
     })
 
 
