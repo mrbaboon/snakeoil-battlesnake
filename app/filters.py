@@ -127,8 +127,13 @@ class FoodFilter(Filter):
             else:
 
                 if food_distance < self.closest_food_distance:
-                    self.closest_food = food
-                    self.closest_food_distance = food_distance
+
+                    for enemy in snake.enemies:
+
+                        # If no other snake is closer to this food, get it!
+                        if food.distance(enemy.head_x, enemy.head_y) < self.closest_food_distance:
+                            self.closest_food = food
+                            self.closest_food_distance = food_distance
 
         if self.closest_food.x > snake.head_x:
 
