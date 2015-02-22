@@ -114,7 +114,6 @@ class FoodFilter(Filter):
 
     def apply(self, snake, actions):
         self.actions = actions
-        logger.info("Initial actions %s" % self.actions)
         from app.models import Snake
 
         for food in snake.board.food:
@@ -131,32 +130,29 @@ class FoodFilter(Filter):
                     self.closest_food = food
                     self.closest_food_distance = food_distance
 
-        logger.info("Closest food: %s, %s" % (self.closest_food.x, self.closest_food.y))
-        logger.info("Snake: %s, %s" % (snake.head_x, snake.head_y))
-
         if self.closest_food.x > snake.head_x:
-            logger.info("Removing action - left")
+
             self.remove_action(Snake.LEFT)
 
         elif self.closest_food.x < snake.head_x:
-            logger.info("Removing action - right")
+
             self.remove_action(Snake.RIGHT)
 
         else:
-            logger.info("Removing action same row")
+
             self.remove_action(Snake.LEFT)
             self.remove_action(Snake.RIGHT)
 
         if self.closest_food.y > snake.head_y:
-            logger.info("Removing action - up")
+
             self.remove_action(Snake.UP)
 
         elif self.closest_food.y < snake.head_y:
-            logger.info("Removing action - down")
+
             self.remove_action(Snake.DOWN)
 
         else:
-            logger.info("Removing action - same column")
+
             self.remove_action(Snake.UP)
             self.remove_action(Snake.DOWN)
 
