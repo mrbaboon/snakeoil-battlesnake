@@ -26,8 +26,8 @@ def start():
 
     return json.dumps({
         'name': SNAKE_NAME,
-        'color': '#00ff00',
-        'head_url': 'http://battlesnake-python.herokuapp.com',
+        'color': '#ff69b4',
+        'head_url': 'http://www.zoom-comics.com/wp-content/uploads/sites/36/2011/12/pinky-pie-pony.jpg',
         'taunt': 'battlesnake-python!'
     })
 
