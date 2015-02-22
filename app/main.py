@@ -58,26 +58,25 @@ def move():
             our_snake_data = snake_data
 
         else:
-            
+
             enemy_snakes.append(
                 Snake(name=snake_data.get('name'),
                       state=snake_data.get('state'),
                       coords=snake_data.get('coords'),
+                      turn=game.turn,
                       last_eaten=snake_data.get('last_eaten'))
             )
 
     our_snake = Snake(name=our_snake_data.get('name'),
                       state=our_snake_data.get('state'),
                       coords=our_snake_data.get('coords'),
+                      turn=game.turn,
                       last_eaten=our_snake_data.get('last_eaten'),
                       board=board,
                       enemies=enemy_snakes)
 
     direction = our_snake.move()
 
-    for food in board.food:
-        dist = food.distance(our_snake.head_x, our_snake.head_y)
-        logger.info(dist)
 
     return json.dumps({
         'move': direction,
