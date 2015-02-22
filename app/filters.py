@@ -281,18 +281,37 @@ class HeadOnLookAheadFilter(Filter):
                     if attackables:
                         potential_benefit_positions.append(Snake.UP)
 
+                    for attackable in attackables:
+                        if attackable.length >= snake.length:
+                            self.remove_action(Snake.UP)
+
                 elif action == Snake.DOWN:
                     attackables = self.get_attackables_in_proximity(snake.head_x, snake.head_y+1, snake.enemies, len(snake.coords))
+
+                    for attackable in attackables:
+                        if attackable.length >= snake.length:
+                            self.remove_action(Snake.DOWN)
+
                     if attackables:
                         potential_benefit_positions.append(Snake.DOWN)
 
                 elif action == Snake.LEFT:
                     attackables = self.get_attackables_in_proximity(snake.head_x-1, snake.head_y, snake.enemies, len(snake.coords))
+
+                    for attackable in attackables:
+                        if attackable.length >= snake.length:
+                            self.remove_action(Snake.LEFT)
+
                     if attackables:
                         potential_benefit_positions.append(Snake.LEFT)
 
                 elif action == Snake.RIGHT:
                     attackables = self.get_attackables_in_proximity(snake.head_x+1, snake.head_y, snake.enemies, len(snake.coords))
+
+                    for attackable in attackables:
+                        if attackable.length >= snake.length:
+                            self.remove_action(Snake.RIGHT)
+
                     if attackables:
                         potential_benefit_positions.append(Snake.RIGHT)
 
@@ -300,6 +319,7 @@ class HeadOnLookAheadFilter(Filter):
             for action in self.actions:
                 if len(potential_benefit_positions) > 0 and action not in potential_benefit_positions:
                     self.remove_action(action)
+
         logger.info("actions %s" % self.actions)
         return self.actions
 
