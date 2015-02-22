@@ -185,20 +185,164 @@ class HeadOnLookAheadFilter(Filter):
             snake_len = len(snake.coords)
 
             # Only attack if we are bigger
-            if snake_len > this_snake_len:
+            i_am_bigger = snake_len > this_snake_len
 
-                # lock x, deal with y
+            if i_am_bigger:
+                # lock x, deal with y +-1
                 if this_snake.head_x == snake.head_x:
                     if this_snake.head_y == snake.head_y-1:
                         self.actions = [Snake.UP]
                     if this_snake.head_y == snake.head_y+1:
                         self.actions = [Snake.DOWN]
 
-                # lock y, deal with x
+                # lock y, deal with x +-1
                 if this_snake.head_y == snake.head_y:
                     if this_snake.head_x == snake.head_x-1:
                         self.actions = [Snake.LEFT]
                     if this_snake.head_x == snake.head_x+1:
                         self.actions = [Snake.RIGHT]
+
+                # deal with top diagonals +-1
+                if this_snake.head_y == snake.head_y-1:
+                    if this_snake.head_x == snake.head_x-1:
+                        if len(self.actions) > 1:
+                            self.remove_action(Snake.DOWN)
+                        if len(self.actions) > 1:
+                            self.remove_action(Snake.RIGHT)
+
+                    if this_snake.head_x == snake.head_x+1:
+                        if len(self.actions) > 1:
+                            self.remove_action(Snake.DOWN)
+                        if len(self.actions) > 1:
+                            self.remove_action(Snake.LEFT)
+
+                # deal with bottom diagonals +-1
+                if this_snake.head_y == snake.head_y+1:
+                    if this_snake.head_x == snake.head_x-1:
+                        if len(self.actions) > 1:
+                            self.remove_action(Snake.UP)
+                        if len(self.actions) > 1:
+                            self.remove_action(Snake.RIGHT)
+
+                    if this_snake.head_x == snake.head_x+1:
+                        if len(self.actions) > 1:
+                            self.remove_action(Snake.UP)
+                        if len(self.actions) > 1:
+                            self.remove_action(Snake.LEFT)
+
+            # deal with top +-2 spaces
+            if this_snake.head_y == snake.head_y-2:
+
+                if this_snake.head_x == snake.head_x:
+                    if i_am_bigger and Snake.UP in self.actions:
+                        self.actions = [Snake.UP]
+
+                if this_snake.head_x < snake.head_x:
+                    if i_am_bigger:
+                        if Snake.UP in self.actions:
+                            self.actions = [Snake.UP]
+                        elif Snake.LEFT in self.actions:
+                            self.actions = [Snake.LEFT]
+                    else:
+                        self.remove_action(Snake.UP)
+                        self.remove_action(Snake.LEFT)
+
+                if this_snake.head_x > snake.head_x:
+                    if i_am_bigger:
+                        if Snake.UP in self.actions:
+                            self.actions = [Snake.UP]
+                        elif Snake.RIGHT in self.actions:
+                            self.actions = [Snake.RIGHT]
+                    else:
+                        self.remove_action(Snake.UP)
+                        self.remove_action(Snake.RIGHT)
+
+            # deal with the outer top +1 space
+            if this_snake.head_y == snake.head_y-1:
+                if this_snake.head_x == snake.head_x-2:
+                    if i_am_bigger:
+                        if Snake.UP in self.actions:
+                            self.actions = [Snake.UP]
+                        elif Snake.LEFT in self.actions:
+                            self.actions = [Snake.LEFT]
+                    else:
+                        self.remove_action(Snake.UP)
+                        self.remove_action(Snake.LEFT)
+                if this_snake.head_x == snake.head_x+2:
+                    if i_am_bigger:
+                        if Snake.UP in self.actions:
+                            self.actions = [Snake.UP]
+                        elif Snake.RIGHT in self.actions:
+                            self.actions = [Snake.RIGHT]
+                    else:
+                        self.remove_action(Snake.UP)
+                        self.remove_action(Snake.RIGHT)
+
+            # deal with the outer middle spaces (x+-2)
+            if this_snake.head_y == snake.head_y:
+                if this_snake.head_x == snake.head_x-2:
+                    if i_am_bigger:
+                        if Snake.LEFT in self.actions:
+                            self.actions = [Snake.LEFT]
+                    else:
+                        self.remove_action(Snake.LEFT)
+
+                if this_snake.head_x == snake.head_x+2:
+                    if i_am_bigger:
+                        if Snake.RIGHT in self.actions:
+                            self.actions = [Snake.RIGHT]
+                    else:
+                        self.remove_action(Snake.RIGHT)
+
+            # deal with the bottom outer y+1
+            if this_snake.head_y == snake.head_y+1:
+                if this_snake.head_x == snake.head_x-2:
+                    if i_am_bigger:
+                        if Snake.DOWN in self.actions:
+                            self.actions = [Snake.DOWN]
+                        elif Snake.LEFT in self.actions:
+                            self.actions = [Snake.LEFT]
+                    else:
+                        self.remove_action(Snake.DOWN)
+                        self.remove_action(Snake.LEFT)
+
+                if this_snake.head_x == snake.head_x+2:
+                    if i_am_bigger:
+                        if Snake.DOWN in self.actions:
+                            self.actions = [Snake.DOWN]
+                        elif Snake.RIGHT in self.actions:
+                            self.actions = [Snake.RIGHT]
+                    else:
+                        self.remove_action(Snake.DOWN)
+                        self.remove_action(Snake.RIGHT)
+
+            # deal with the bottom y+2
+            if this_snake.head_y == snake.head_y+2:
+                if this_snake.head_x < snake.head_x:
+                    if i_am_bigger:
+                        if Snake.DOWN in self.actions:
+                            self.actions = [Snake.DOWN]
+                        elif Snake.LEFT in self.actions:
+                            self.actions = [Snake.LEFT]
+                    else:
+                        self.remove_action(Snake.DOWN)
+                        self.remove_action(Snake.LEFT)
+
+                if this_snake.head_x == snake.head_x:
+                    if i_am_bigger:
+                        if Snake.DOWN in self.actions:
+                            self.actions = [Snake.DOWN]
+                    else:
+                        self.remove_action(Snake.DOWN)
+
+                if this_snake.head_x > snake.head_x:
+                    if i_am_bigger:
+                        if Snake.DOWN in self.actions:
+                            self.actions = [Snake.DOWN]
+                        elif Snake.RIGHT in self.actions:
+                            self.actions = [Snake.RIGHT]
+                    else:
+                        self.remove_action(Snake.DOWN)
+                        self.remove_action(Snake.RIGHT)
 
         return self.actions
